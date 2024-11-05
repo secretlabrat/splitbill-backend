@@ -1,0 +1,72 @@
+name: CI and CD for Dev
+on:
+  push:
+    branches: ["development"]
+jobs:
+  build-and-push-image:
+    environment: development
+    name: Build Image and Push to Registry
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+      attestations: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup SHA
+        run: echo "GITHUB_SHA=${GITHUB_SHA}" >> $GITHUB_ENV
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@v3.1.0
+        with:
+          registry: ${{ vars.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push Docker image
+        id: push
+        uses: docker/build-push-action@v6
+        with:
+          platforms: linux/amd64,linux/arm64
+          context: .
+          push: true
+          tags: ${{ vars.REGISTRY }}/${{ github.repository }}:${{ env.GITHUB_SHA }}
+
+      - name: Image digest
+        run: echo ${{ steps.docker_build.outputs.digest }}
+
+  gitops-dev-versioning:
+    environment: development
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    needs: build-and-push-image
+    name: GitOps Dev Versioning
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: config git
+        run: |
+          git --version
+          git config user.name "GitHub Action"
+          git config user.email "root@kidkrub.me"
+
+      - name: set up escaped repo
+        run: echo "ESCAPED_REPO=$(echo "${{ github.repository }}" | sed 's/\//\\\//g')" >> $GITHUB_ENV
+
+      - name: change image tag to deploy dev
+        run: |
+          sed -i -E "s/${{ vars.REGISTRY }}\/${{env.ESCAPED_REPO}}.*$/${{ vars.REGISTRY }}\/${{env.ESCAPED_REPO}}:${GITHUB_SHA}/" infra/gitops/dev/deployment.yaml
+          git add infra/gitops/dev/deployment.yaml
+          git commit -m "[skip actions] 🤖 change dev docker image version to ${GITHUB_SHA}"
+          git pull --rebase
+          git push
