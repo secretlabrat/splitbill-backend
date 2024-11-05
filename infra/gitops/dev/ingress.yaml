@@ -1,0 +1,18 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress-website
+  namespace: spilt-bill-dev
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: spilt-bill-api.kidkrub.me
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: spilt-bill-dev-service
+            port:
+              number: 80
