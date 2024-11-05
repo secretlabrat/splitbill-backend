@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: summer-workshop-spilt-bill
-          image: ghcr.io/secretlabrat/spilt-bill-backend
+          image: ghcr.io/secretlabrat/spiltbill-backend
           imagePullPolicy: Always
           env:
               -  name: SERVER_PORT
