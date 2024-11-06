@@ -6,7 +6,7 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-    - host: split-bill-api.kidkrub.me
+    - host: splitbill-api.kidkrub.me
       http:
         paths:
           - path: /
