@@ -1,8 +1,8 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: spilt-bill-dev-deployment
-  namespace: spilt-bill-dev
+  name: split-bill-dev-deployment
+  namespace: split-bill-dev
 spec:
   selector:
     matchLabels:
@@ -14,15 +14,15 @@ spec:
         app: api
     spec:
       containers:
-        - name: summer-workshop-spilt-bill
-          image: ghcr.io/secretlabrat/splitbill-backend:d5b9148acde81e9f0a73a7f761e174ccc6eeaa2c
+        - name: summer-workshop-split-bill
+          image: ghcr.io/secretlabrat/splitbill-backend
           imagePullPolicy: Always
           env:
-              -  name: SERVER_PORT
-                 valueFrom:
-                     configMapKeyRef:
-                         name: app-config
-                         key: server.port
+            - name: SERVER_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config
+                  key: server.port
           livenessProbe:
             httpGet:
               path: /v1/healthcheck
@@ -42,5 +42,5 @@ spec:
               cpu: "0.5"
               memory: 256Mi
             requests:
-                cpu: "0.25"
-                memory: 128Mi
+              cpu: "0.25"
+              memory: 128Mi

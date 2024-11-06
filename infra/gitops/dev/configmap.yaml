@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-    name: app-config
-    namespace: spilt-bill-dev
+  name: app-config
+  namespace: split-bill-dev
 data:
-    server.port: "3000"
+  server.port: "3000"
