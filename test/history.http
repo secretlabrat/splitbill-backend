@@ -1,0 +1,16 @@
+POST http://localhost:3000/v1/history
+content-type: application/json
+
+{
+    "name": "sample",
+    "time": "Wed, 21 Oct 2015 18:27:50 GMT"
+}
+###
+
+PUT http://localhost:3000/v1/history/1234
+content-type: application/json
+
+{
+    "name": "sample",
+    "time": "Wed, 21 Oct 2015 18:27:50 GMT"
+}
