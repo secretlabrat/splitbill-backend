@@ -23,6 +23,21 @@ spec:
                 configMapKeyRef:
                   name: app-config
                   key: server.port
+            - name: FIREBASE_PROJECT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: splitbill-firebase
+                  key: firebase-project-id
+            - name: FIREBASE_ADMIN_CLIENT_EMAIL
+              valueFrom:
+                secretKeyRef:
+                  name: splitbill-firebase
+                  key: firebase-admin-client-email
+            - name: FIREBASE_ADMIN_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: splitbill-firebase
+                  key: firebase-admin-key
           livenessProbe:
             httpGet:
               path: /v1/healthcheck
