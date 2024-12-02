@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: summer-workshop-split-bill
-          image: ghcr.io/secretlabrat/splitbill-backend:742521cc2b5eabf51e71288a796550567e0d68e2
+          image: ghcr.io/secretlabrat/splitbill-backend:1a3a3202f1efaef8bb500f71583649568953a5a5
           imagePullPolicy: Always
           env:
             - name: SERVER_PORT
