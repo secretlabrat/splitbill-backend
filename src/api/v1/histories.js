@@ -4,6 +4,7 @@ const {
   authenticateFirebaseAuthToken,
 } = require("../../middleware/firebase-auth.js");
 
+const { Timestamp } = require("firebase-admin/firestore");
 const crypto = require("node:crypto");
 
 router.get("/", authenticateFirebaseAuthToken, async (req, res) => {
@@ -13,7 +14,7 @@ router.get("/", authenticateFirebaseAuthToken, async (req, res) => {
   const result = await collection.get();
   result.forEach((doc) => {
     const { billNo, billName, billDate } = doc.data();
-    bills.push({ billNo, billName, billDate });
+    bills.push({ billNo, billName, billDate: billDate.toDate() });
   });
 
   res.json(bills);
@@ -24,7 +25,14 @@ router.get("/:id", authenticateFirebaseAuthToken, async (req, res) => {
   const { id } = req.params;
   const doc = fireStore.doc(`/histories/${user.user_id}/bills/${id}`);
   const result = await doc.get();
-  res.json(result.data());
+  const data = result.data();
+  if (!data) {
+    return res
+      .status(404)
+      .json({ status: "error", message: "record not found" });
+  }
+  const { billDate } = data;
+  res.json({ ...data, billDate: billDate.toDate() });
 });
 
 router.post("/", authenticateFirebaseAuthToken, async (req, res) => {
@@ -34,6 +42,7 @@ router.post("/", authenticateFirebaseAuthToken, async (req, res) => {
   const doc = fireStore.doc(`/histories/${user.user_id}/bills/${uuid}`);
 
   body.billNo = uuid;
+  body.billDate = Timestamp.now();
   await doc.set(body);
   res.json({ status: "success", message: "record created" });
 });
