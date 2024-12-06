@@ -8,6 +8,7 @@ app.use(
   cors({
     origin: [
       "https://splitbill.kidkrub.me",
+      "https://splitbill-aws.kidkrub.me",
       "http://127.0.0.1:3000",
       "http://localhost:3000",
       "http://localhost:8080",
